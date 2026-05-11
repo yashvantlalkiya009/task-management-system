@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task Manager</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-dark bg-dark mb-4">
+  <div class="container">
+    <span class="navbar-brand">
+      <i class="bi bi-check2-square me-2"></i>Task Manager
+    </span>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container pb-5">
+
+  <!-- Top Controls -->
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      <label class="form-label mb-0 text-muted small">Filter:</label>
+      <select id="filterSelect" class="form-select form-select-sm" style="width:160px;">
+        <option value="all">All Tasks</option>
+        <option value="incomplete">Incomplete</option>
+        <option value="completed">Completed</option>
+      </select>
+      <div class="input-group input-group-sm" style="width:220px;">
+        <span class="input-group-text bg-white border-end-0">
+          <i class="bi bi-search text-muted" style="font-size:0.8rem;"></i>
+        </span>
+        <input type="text" id="searchInput" class="form-control border-start-0 ps-0"
+          placeholder="Search tasks..." oninput="loadTasks()" />
+      </div>
+      <div id="loadingSpinner" class="spinner-border spinner-border-sm text-secondary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+    <button class="btn btn-dark btn-sm px-3" onclick="openAddModal()">
+      <i class="bi bi-plus-lg me-1"></i>Add Task
+    </button>
+  </div>
+
+  <!-- Task Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-sm-4">
+      <div class="card text-center p-3">
+        <div class="text-muted small mb-1">Total</div>
+        <div class="fs-4 fw-bold" id="statTotal">0</div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="card text-center p-3">
+        <div class="text-muted small mb-1">Pending</div>
+        <div class="fs-4 fw-bold text-warning" id="statPending">0</div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="card text-center p-3">
+        <div class="text-muted small mb-1">Completed</div>
+        <div class="fs-4 fw-bold text-success" id="statDone">0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task Table -->
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th style="width:30px"></th>
+            <th>Title</th>
+            <th>Description</th>
+            <th style="width:110px">Status</th>
+            <th style="width:130px">Created</th>
+            <th style="width:120px" class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="taskTableBody">
+          <tr>
+            <td colspan="5">
+              <div class="empty-state">
+                <i class="bi bi-inbox"></i>
+                Loading tasks...
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="card-footer bg-white border-0 py-3">
+	  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+	    <div class="small text-muted" id="paginationInfo">
+	      Showing 0 to 0 of 0 tasks
+	    </div>
+	    <nav>
+	      <ul class="pagination pagination-sm mb-0" id="paginationLinks"></ul>
+	    </nav>
+	  </div>
+	</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Add / Edit Task Modal -->
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" id="modalTitle">Add Task</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body pt-3">
+        <input type="hidden" id="taskId" />
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
+          <input type="text" id="taskTitle" class="form-control" placeholder="Enter task title..." />
+          <div class="invalid-feedback" id="titleError">Title is required.</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Description <span class="text-muted small">(optional)</span></label>
+          <textarea id="taskDesc" class="form-control" rows="3" placeholder="Enter description..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-dark px-4" onclick="saveTask()">
+          <i class="bi bi-check2 me-1"></i>Save Task
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-body text-center py-4">
+        <i class="bi bi-exclamation-triangle-fill text-danger fs-1 mb-2 d-block"></i>
+        <p class="fw-semibold mb-1">Delete this task?</p>
+        <p class="text-muted small">This cannot be undone.</p>
+      </div>
+      <div class="modal-footer border-0 justify-content-center pt-0 gap-2">
+        <button class="btn btn-light btn-sm px-4" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-danger btn-sm px-4" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- View Task Modal -->
+<div class="modal fade" id="viewTaskModal" tabindex="-1">
+
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+
+    <div class="modal-content border-0 shadow">
+
+      <div class="modal-header border-0">
+
+        <h5 class="modal-title fw-bold">
+          <i class="bi bi-eye me-2"></i>
+          Task Details
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal">
+        </button>
+
+      </div>
+
+      <div class="modal-body">
+
+        <div class="mb-3">
+
+          <label class="text-muted small">
+            TITLE
+          </label>
+
+          <h5 id="viewTaskTitle"></h5>
+
+        </div>
+
+        <div class="mb-3">
+
+          <label class="text-muted small">
+            DESCRIPTION
+          </label>
+
+          <div
+            id="viewTaskDesc"
+            class="border rounded p-3 bg-light">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="col-md-6">
+
+            <label class="text-muted small">
+              STATUS
+            </label>
+
+            <div id="viewTaskStatus"></div>
+
+          </div>
+
+          <div class="col-md-6">
+
+            <label class="text-muted small">
+              CREATED AT
+            </label>
+
+            <div id="viewTaskCreated"></div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Toast Notification -->
+<div class="toast-container">
+  <div id="toastMsg" class="toast align-items-center text-white border-0" role="alert">
+    <div class="d-flex">
+      <div class="toast-body" id="toastBody">Done!</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

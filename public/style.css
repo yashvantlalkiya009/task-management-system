@@ -1,0 +1,95 @@
+ body {
+      background: #f4f6fb;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.4rem;
+      letter-spacing: -0.5px;
+    }
+    .card {
+      border: none;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
+    .table thead th {
+      background: #f8f9fa;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6c757d;
+      border-bottom: 2px solid #e9ecef;
+    }
+    .task-title-done {
+      text-decoration: line-through;
+      color: #adb5bd;
+    }
+    .badge-pending {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffc107;
+    }
+    .badge-done {
+      background: #d1e7dd;
+      color: #0a3622;
+      border: 1px solid #198754;
+    }
+    .action-btn {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .toast-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 9999;
+    }
+    #loadingSpinner {
+      display: none;
+    }
+    tr.completed-row {
+      background: #f8fff8;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 3rem 0;
+      color: #adb5bd;
+    }
+    .empty-state i {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .pagination .page-link {
+      color: #212529;
+      border-radius: 8px;
+      margin: 0 2px;
+      min-width: 36px;
+      text-align: center;
+    }
+
+    .pagination .page-item.active .page-link {
+      background-color: #212529;
+      border-color: #212529;
+      color: #fff;
+    }
+
+    .pagination .page-link:hover {
+      background: #f1f3f5;
+    }
+    .action-btn {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
