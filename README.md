@@ -53,7 +53,7 @@ All operations work using AJAX without page reloads.
 ## 1. Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/task-manager.git
+git clone https://github.com/yashvantlalkiya009/task-manager.git
 
 cd task-manager
 ```
